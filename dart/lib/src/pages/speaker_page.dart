@@ -18,6 +18,8 @@ class _SpeakerPageState extends State<SpeakerPage> {
   final MyWidgets myWidgets = MyWidgets();
   late Evento evento;
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,11 +29,11 @@ class _SpeakerPageState extends State<SpeakerPage> {
           children: [
             ListTile(
                 title: Text(
-                  evento.orador[0].nome,
+                  widget.orador.nome,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 subtitle: Text(
-                  evento.orador[0].universidade,
+                   widget.orador.nome,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 leading: CircleAvatar(
@@ -39,7 +41,7 @@ class _SpeakerPageState extends State<SpeakerPage> {
                     backgroundImage: CachedNetworkImageProvider(
                       evento.orador[0].foto == ''
                           ? 'src/assets/perfil_image.jpg'
-                          : evento.orador[0].foto,
+                          : widget.orador.foto,
                     )))
           ],
         ),

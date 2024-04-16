@@ -4,7 +4,9 @@ import 'package:chuva_dart/src/repositories/eventos_repository.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../widgets/my_widgets.dart';
 import 'package:chuva_dart/src/models/evento.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class ActivityPage extends StatefulWidget {
   const ActivityPage({Key? key, required this.index}) : super(key: key);
@@ -169,6 +171,13 @@ class _ActivityPageState extends State<ActivityPage> {
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                     ),
                   ),
+                  GestureDetector(
+
+                    onTap: () {
+    String oradorJson = jsonEncode(evento.orador[0].toJson());
+    GoRouter.of(context).push('/calendar/activity/speaker/$oradorJson');
+  },
+                    child: 
                   ListTile(
                       title: Text(
                         evento.orador[0].nome,
@@ -184,7 +193,7 @@ class _ActivityPageState extends State<ActivityPage> {
                             evento.orador[0].foto == ''
                                 ? 'src/assets/perfil_image.jpg'
                                 : evento.orador[0].foto,
-                          )))
+                          ))))
                 ])
               : const SizedBox()
         ],

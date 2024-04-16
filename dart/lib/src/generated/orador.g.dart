@@ -18,4 +18,6 @@ Map<String, dynamic> _$OradorToJson(Orador instance) => <String, dynamic>{
       'nome': instance.nome,
       'bio': instance.bio,
       'universidade': instance.universidade,
+      'role': instance.role,
+      'foto': instance.foto
     };
