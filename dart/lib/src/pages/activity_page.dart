@@ -6,11 +6,10 @@ import '../widgets/my_widgets.dart';
 import 'package:chuva_dart/src/models/evento.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 
 class ActivityPage extends StatefulWidget {
-  const ActivityPage({Key? key, required this.index}) : super(key: key);
-  final int index;
+  const ActivityPage({Key? key, required this.evento}) : super(key: key);
+  final Evento evento;
 
   @override
   State<ActivityPage> createState() => _ActivityPageState();
@@ -19,25 +18,12 @@ class ActivityPage extends StatefulWidget {
 class _ActivityPageState extends State<ActivityPage> {
   final EventosRepository eventoObject = EventosRepository();
   final MyWidgets myWidgets = MyWidgets();
-  late Evento evento;
+  // late Evento evento;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: myWidgets.standardAppBar(context),
-      body: FutureBuilder(
-        future: _carregarEvento(widget.index),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return activityPageBody(evento);
-          } else if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-    );
+        appBar: myWidgets.standardAppBar(context, widget.evento), body: activityPageBody(widget.evento));
   }
 
   Widget activityPageBody(Evento evento) {
@@ -131,7 +117,11 @@ class _ActivityPageState extends State<ActivityPage> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xff306dc3),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      evento.isFavorite = evento.isFavorite; // Toggle favorite state
+                    });
+                  },
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -172,28 +162,25 @@ class _ActivityPageState extends State<ActivityPage> {
                     ),
                   ),
                   GestureDetector(
-
-                    onTap: () {
-    String oradorJson = jsonEncode(evento.orador[0].toJson());
-    GoRouter.of(context).push('/calendar/activity/speaker/$oradorJson');
-  },
-                    child: 
-                  ListTile(
-                      title: Text(
-                        evento.orador[0].nome,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      subtitle: Text(
-                        evento.orador[0].universidade,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                      leading: CircleAvatar(
-                          maxRadius: 30,
-                          backgroundImage: CachedNetworkImageProvider(
-                            evento.orador[0].foto == ''
-                                ? 'src/assets/perfil_image.jpg'
-                                : evento.orador[0].foto,
-                          ))))
+                      onTap: () {
+                        GoRouter.of(context).go('/calendar/speaker', extra: evento);
+                      },
+                      child: ListTile(
+                          title: Text(
+                            evento.orador[0].nome,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            evento.orador[0].universidade,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          leading: CircleAvatar(
+                              maxRadius: 30,
+                              backgroundImage: CachedNetworkImageProvider(
+                                evento.orador[0].foto == ''
+                                    ? 'https://conteudo.imguol.com.br/blogs/174/files/2018/05/iStock-648229868-1024x909.jpg'
+                                    : evento.orador[0].foto,
+                              ))))
                 ])
               : const SizedBox()
         ],
@@ -201,16 +188,19 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  Future<Evento> _carregarEvento(int index) async {
-    try {
-      final eventos = await eventoObject.carregarEvento(index);
-      setState(() {
-        evento = eventos;
-      });
-      return evento;
-    } catch (e) {
-      print('Erro ao carregar eventos: $e');
-      rethrow;
-    }
-  }
+  // Future<Evento> _carregarEvento(int index) async {
+  //   try {
+  //     final eventos = await eventoObject.carregarEvento(index);
+  //     if (mounted) {
+  //       // Verifica se o widget ainda está montado antes de chamar setState
+  //       setState(() {
+  //         evento = eventos;
+  //       });
+  //     }
+  //     return evento;
+  //   } catch (e) {
+  //     print('Erro ao carregar eventos: $e');
+  //     rethrow;
+  //   }
+  // }
 }

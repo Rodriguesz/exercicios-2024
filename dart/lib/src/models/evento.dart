@@ -15,6 +15,7 @@ class Evento {
   String corCategoria;
   String tipo;
   List<Orador> orador;
+  bool isFavorite;
 
   Evento({
     required this.titulo,
@@ -26,6 +27,7 @@ class Evento {
     required this.corCategoria,
     required this.tipo,
     required this.orador,
+    required this.isFavorite,
   });
 
   factory Evento.fromJson(Map<String, dynamic> json) => _$EventoFromJson(json);

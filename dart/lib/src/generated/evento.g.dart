@@ -19,6 +19,7 @@ Evento _$EventoFromJson(Map<String, dynamic> json) => Evento(
       orador: (json['people'] as List<dynamic>)
           .map((item) => Orador.fromJson(item as Map<String, dynamic>))
           .toList(),
+      isFavorite: false,
     );
 
 Map<String, dynamic> _$EventoToJson(Evento instance) => <String, dynamic>{
