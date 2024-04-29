@@ -1,8 +1,10 @@
 import 'package:chuva_dart/src/models/evento.dart';
+import 'package:chuva_dart/src/repositories/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/parser.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyWidgets {
   /// CONVERTE A COR QUE VEIO DO JSON EM HEXADICIMAL
@@ -32,6 +34,7 @@ class MyWidgets {
 
   AppBar standardAppBar(BuildContext context, Evento evento) {
     return AppBar(
+      automaticallyImplyLeading: false,
       toolbarHeight: 24,
       backgroundColor: const Color(0xff456189),
       centerTitle: true,
@@ -43,7 +46,7 @@ class MyWidgets {
           Row(
             children: [
               IconButton(
-                onPressed: () => GoRouter.of(context).go('/', extra: evento),
+                onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back_ios_new),
                 color: Colors.white,
               ),
@@ -63,52 +66,57 @@ class MyWidgets {
   Widget eventsCard(Evento evento, BuildContext context) {
     var hexColor = convertHexToColor(evento.corCategoria);
     var horaInicio = DateFormat('HH:mm').format(evento.inicio);
-
     var horaFim = DateFormat('HH:mm').format(evento.fim);
 
-    return GestureDetector(
-      onTap: () => GoRouter.of(context).go('/calendar/activity', extra: evento),
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(3), // Raio da borda
-        ),
-        child: Container(
-          height: 87,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(3),
-            shape: BoxShape.rectangle,
-            border: Border(
-              left: BorderSide(
-                color: hexColor,
-                width: 4,
+    final mediaQuery = MediaQuery.of(context);
+    final myWidth = mediaQuery.size.width;
+    final myHeight = mediaQuery.size.height;
+
+    return Consumer<FavoritosProvider>(builder: (context, favoritosProvider, _) {
+      return GestureDetector(
+        onTap: () => GoRouter.of(context).push('/calendar/activity', extra: evento),
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(3), // Raio da borda
+          ),
+          child: Container(
+            height: myHeight * 0.12,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(3),
+              shape: BoxShape.rectangle,
+              border: Border(
+                left: BorderSide(
+                  color: hexColor,
+                  width: 4,
+                ),
               ),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(13, 6, 0, 8),
-            child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 15, right: 5),
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        '${evento.tipo} de $horaInicio até $horaFim', // Adiciona zero à esquerda se necessário
-                        style: const TextStyle(
-                          fontSize: 12,
-                          overflow: TextOverflow.ellipsis,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0, bottom: 2),
+                    child: Row(
+                      children: [
+                        Text(
+                          '${evento.tipo} de $horaInicio até $horaFim', // Adiciona zero à esquerda se necessário
+                          style: const TextStyle(
+                            fontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
-                      ),
-                      if (evento.isFavorite == true) const Icon(Icons.bookmark),
-                    ],
+                        const Spacer(),
+                        if (evento.isFavorite == true) const Icon(Icons.bookmark),
+                      ],
+                    ),
                   ),
-
-                  // flex: 1,
                   SizedBox(
-                    width: 300,
+                    width: myWidth * 0.7,
                     child: Text(
                       evento.titulo,
                       style: const TextStyle(
@@ -119,7 +127,9 @@ class MyWidgets {
                       maxLines: 2,
                     ),
                   ),
-
+                  SizedBox(
+                    height: myHeight * 0.003,
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: evento.orador.asMap().entries.map((entry) {
@@ -148,7 +158,7 @@ class MyWidgets {
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

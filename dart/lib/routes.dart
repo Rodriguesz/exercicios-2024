@@ -20,7 +20,7 @@ final routes = GoRouter(
       },
     ),
     GoRoute(
-      path: '/calendar/speaker',
+      path: '/calendar/activity/speaker',
       builder: (context, state) {
         final Evento evento = state.extra as Evento;
         return SpeakerPage(evento: evento);

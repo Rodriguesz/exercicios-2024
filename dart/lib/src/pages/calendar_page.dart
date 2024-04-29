@@ -1,3 +1,4 @@
+import 'package:chuva_dart/src/database/shared_preferences.dart';
 import 'package:chuva_dart/src/models/evento.dart';
 import 'package:chuva_dart/src/repositories/eventos_repository.dart';
 import 'package:chuva_dart/src/widgets/my_widgets.dart';
@@ -17,6 +18,7 @@ class _CalendarPageState extends State<CalendarPage> {
   var qtdEventos = 0;
   List<Evento> eventosDoDia = [];
   List<Evento> todosEventos = [];
+  final sharedPreferences = SharedPreferencesHelper();
 
   final MyWidgets myWidgets = MyWidgets();
   int diaSelecionado = 0;
@@ -24,8 +26,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    var diaSelecionado = dias[0];
-    _carregarEventos(diaSelecionado);
+    _carregarEventosIniciais();
   }
 
   @override
@@ -126,11 +127,11 @@ class _CalendarPageState extends State<CalendarPage> {
               children: [
                 Text(
                   "Nov",
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 21),
                 ),
                 Text(
                   "2023",
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -148,7 +149,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       setState(() {
                         _clickedIndex = index;
                         diaSelecionado = dias[index];
-                        _carregarEventos(diaSelecionado);
+                        _carregarEventosDoDia(diaSelecionado);
                       });
                     }
                   },
@@ -194,22 +195,46 @@ class _CalendarPageState extends State<CalendarPage> {
     ]);
   }
 
-  Future<void> _carregarEventos(int diaSelecionado) async {
-    try {
-      final eventos = await evento.carregarTodosEventos(); // Obter todos os eventos
+  Future<void> _carregarEventosIniciais() async {
+    await _todosEventos();
+    _carregarEventosDoDia(dias[0]);
+  }
 
-      final eventosDoDia = eventos.where((evento) {
+  Future<void> _todosEventos() async {
+    todosEventos = await evento.carregarTodosEventos(); // Obter todos os eventos
+  }
+
+  Future<void> _carregarEventosDoDia(int diaSelecionado) async {
+    final eventosFavoritados = await sharedPreferences.recuperarTitulosEventosFavoritos();
+
+    try {
+      final eventosDoDia = todosEventos.where((evento) {
         // Filtrar eventos com base no dia selecionado
         final diaDoEvento = evento.inicio.day;
+        if (eventosFavoritados.isNotEmpty && eventosFavoritados.contains(evento.titulo)) {
+          evento.isFavorite = true;
+        }
         return diaDoEvento == diaSelecionado;
       }).toList();
+
+      //organiza a lista com base no horario de inicio e termino dos eventos
+      eventosDoDia.sort((a, b) {
+        // Comparar o horário de início primeiro
+        final comparacaoInicio = a.inicio.compareTo(b.inicio);
+        if (comparacaoInicio != 0) {
+          return comparacaoInicio;
+        }
+        // Se os horários de início forem iguais, comparar o horário de término
+        return a.fim.compareTo(b.fim);
+      });
+
       setState(() {
-        todosEventos = eventos;
         this.eventosDoDia = eventosDoDia; // Definir apenas os eventos do dia selecionado
         qtdEventos = eventosDoDia.length;
       });
     } catch (e) {
-      print('Erro ao carregar eventos: $e');
+      debugPrint('Erro ao carregar eventos: $e');
+      rethrow;
     }
   }
 }
