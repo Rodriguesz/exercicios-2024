@@ -3,18 +3,18 @@ import 'package:flutter/foundation.dart';
 import '../models/evento.dart';
 
 class FavoritosProvider extends ChangeNotifier {
-  List<Evento> _favoritos = [];
+  final List<Evento> _favoritos = [];
 
   List<Evento> get favoritos => _favoritos;
-  final shared_preferences = SharedPreferencesHelper();
+  final sharedPreferences = SharedPreferencesHelper();
 
   void adicionarFavorito(Evento evento) async {
     if (evento.isFavorite) {
       evento.isFavorite = false;
-      await shared_preferences.removerTituloEventoFavorito(evento.titulo);
+      await sharedPreferences.removerTituloEventoFavorito(evento.titulo);
     } else {
       evento.isFavorite = true;
-      await shared_preferences.adicionarTituloEventoFavorito(evento.titulo);
+      await sharedPreferences.adicionarTituloEventoFavorito(evento.titulo);
     }
     notifyListeners(); // Notifica os ouvintes sobre a mudança no estado
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:chuva_dart/src/models/evento.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class EventosRepository {
   Future<List<Evento>> carregarTodosEventos() async {
@@ -31,7 +32,7 @@ class EventosRepository {
         throw Exception('Erro ao carregar eventos');
       }
     } catch (e) {
-      print('Erro ao obter dados da API: $e');
+      debugPrint('Erro ao obter dados da API: $e');
       return []; // Retorna uma lista vazia em caso de erro
     }
   }

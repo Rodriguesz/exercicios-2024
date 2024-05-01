@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -91,7 +91,7 @@ class _SpeakerPageState extends State<SpeakerPage> {
                 ),
                 Text(
                   myWidgets.removerHtmlString(widget.evento.orador[0].bio),
-                  style: TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 15),
                 ),
                 const Text(
                   'Atividades',
@@ -104,7 +104,7 @@ class _SpeakerPageState extends State<SpeakerPage> {
           eventos.isNotEmpty
               ? ListView.builder(
                   shrinkWrap: true, // this property means that the ListView will wrap its content
-                  physics: NeverScrollableScrollPhysics(), // to disable ListView's scrolling
+                  physics: const NeverScrollableScrollPhysics(), // to disable ListView's scrolling
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
@@ -134,13 +134,12 @@ class _SpeakerPageState extends State<SpeakerPage> {
       setState(() {
         this.eventos = eventosDoDia; // Definir apenas os eventos do dia selecionado
 
-        print(this.eventos.length);
         // for (int i = 0; i < eventosDoDia.length; i++) {
         //   print('eventos setState carregarEventos ${eventosDoDia[i].orador[0].nome}');
         // }
       });
     } catch (e) {
-      print('Erro ao carregar eventos SpeakerPage: $e');
+      debugPrint('Erro ao carregar eventos SpeakerPage: $e');
     }
   }
 }

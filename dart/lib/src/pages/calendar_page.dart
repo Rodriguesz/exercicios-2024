@@ -3,6 +3,7 @@ import 'package:chuva_dart/src/models/evento.dart';
 import 'package:chuva_dart/src/repositories/eventos_repository.dart';
 import 'package:chuva_dart/src/widgets/my_widgets.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
