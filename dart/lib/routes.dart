@@ -1,7 +1,6 @@
 import 'package:chuva_dart/src/pages/activity_page.dart';
 import 'package:chuva_dart/src/pages/calendar_page.dart';
 import 'package:chuva_dart/src/pages/speaker_page.dart';
-// import 'package:chuva_dart/src/pages/home_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'src/models/evento.dart';
